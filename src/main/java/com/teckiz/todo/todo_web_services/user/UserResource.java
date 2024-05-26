@@ -34,6 +34,7 @@ public class UserResource {
 
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
+
         User savedUser = userDaoService.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -41,5 +42,10 @@ public class UserResource {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id){
+        userDaoService.deleteById(id);
     }
 }
