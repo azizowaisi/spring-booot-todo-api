@@ -1,10 +1,15 @@
 package com.teckiz.todo.todo_web_services.user;
 
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 public class User {
     private Integer id;
+    @Size(min=2, message = "Name must contains 2 characters!")
     private String name;
+    @Past(message = "Birth date should be in past")
     private LocalDate birthDate;
 
     public User(Integer id, String name, LocalDate birthDate) {
