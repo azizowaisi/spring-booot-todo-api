@@ -1,6 +1,10 @@
 package com.teckiz.todo.todo_web_services.user;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 import jakarta.validation.Valid;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,14 +27,19 @@ public class UserResource {
     }
 
     @GetMapping("/users/{id}")
-    public User retriveUser(@PathVariable int id) throws UserPrincipalNotFoundException {
-        User user =  userDaoService.findOne(id);
+    public EntityModel<User> retrieveUser(@PathVariable int id) throws UserPrincipalNotFoundException {
+        User user = userDaoService.findOne(id);
 
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException("id:" + id);
         }
 
-        return user;
+        EntityModel<User> entityModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder link = linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
+        entityModel.add(link.withRel("all-users"));
+
+        return entityModel;
     }
 
     @PostMapping("/users")
@@ -46,7 +55,7 @@ public class UserResource {
     }
 
     @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable int id){
+    public void deleteUser(@PathVariable int id) {
         userDaoService.deleteById(id);
     }
 }
