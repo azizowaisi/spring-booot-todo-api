@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("users/{id}/posts")
 public class PostResource {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -19,7 +20,7 @@ public class PostResource {
         this.postRepository = postRepository;
     }
 
-    @GetMapping("users/{id}/posts")
+    @GetMapping
     public List<Post> retrievePostsForUser(@PathVariable Integer id) {
 
         Optional<User> user = userRepository.findById(id);
@@ -31,7 +32,7 @@ public class PostResource {
         return user.get().getPosts();
     }
 
-    @PostMapping("users/{id}/posts")
+    @PostMapping
     public ResponseEntity<Object> createPostForUser(@PathVariable Integer id, @Valid @RequestBody Post post){
 
         Optional<User> user = userRepository.findById(id);
