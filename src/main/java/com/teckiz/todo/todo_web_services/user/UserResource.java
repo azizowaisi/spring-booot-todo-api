@@ -16,14 +16,16 @@ import java.util.List;
 @RestController
 public class UserResource {
     private final UserDaoService userDaoService;
+    private final UserRepository userRepository;
 
-    public UserResource(UserDaoService userDaoService) {
+    public UserResource(UserDaoService userDaoService, UserRepository userRepository) {
         this.userDaoService = userDaoService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
-        return userDaoService.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping("/users/{id}")
