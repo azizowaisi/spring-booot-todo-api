@@ -15,10 +15,8 @@ public class User {
     @GeneratedValue
     private Integer id;
     @Size(min=2, message = "Name must contains 2 characters!")
-    @JsonProperty("user_name")
     private String name;
     @Past(message = "Birth date should be in past")
-    @JsonProperty("birth_date")
     private LocalDate birthDate;
 
     public User(Integer id, String name, LocalDate birthDate) {

@@ -12,14 +12,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserResource {
-    private final UserDaoService userDaoService;
     private final UserRepository userRepository;
 
-    public UserResource(UserDaoService userDaoService, UserRepository userRepository) {
-        this.userDaoService = userDaoService;
+    public UserResource(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -30,13 +29,14 @@ public class UserResource {
 
     @GetMapping("/users/{id}")
     public EntityModel<User> retrieveUser(@PathVariable int id) throws UserPrincipalNotFoundException {
-        User user = userDaoService.findOne(id);
 
-        if (user == null) {
+        Optional<User> user = userRepository.findById(id);
+
+        if(user.isEmpty()){
             throw new UserNotFoundException("id:" + id);
         }
 
-        EntityModel<User> entityModel = EntityModel.of(user);
+        EntityModel<User> entityModel = EntityModel.of(user.get());
 
         WebMvcLinkBuilder link = linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
         entityModel.add(link.withRel("all-users"));
@@ -47,7 +47,7 @@ public class UserResource {
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 
-        User savedUser = userDaoService.save(user);
+        User savedUser = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -58,6 +58,6 @@ public class UserResource {
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable int id) {
-        userDaoService.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
